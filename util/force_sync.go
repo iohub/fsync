@@ -4,20 +4,20 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-
-	"github.com/iohub/fsync/fwatcher"
+	"strings"
 )
 
-func walkAndSync(dir string, syncHost string) {
+func walkAndSync(rootPath string, syncHost string) {
 	walker := func(fpath string, f os.FileInfo, err error) error {
 		if !f.IsDir() {
 			fmt.Printf("[INFO] sync: %s\n", fpath)
-			fwatcher.PostFile(fpath, dir, syncHost)
+			subpath := strings.TrimPrefix(fpath, rootPath)
+			PostFile(fpath, fmt.Sprintf(UrlParamFormat, syncHost, subpath))
 		}
 		return nil
 	}
 
-	filepath.Walk(dir, walker)
+	filepath.Walk(rootPath, walker)
 }
 
 func ForceSync(rootPath string, host string) {

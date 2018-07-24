@@ -1,6 +1,7 @@
-package ginsync
+package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -68,4 +69,12 @@ func saveUploadedFile(file *multipart.FileHeader, originPath string, projPath st
 	defer out.Close()
 	io.Copy(out, src)
 	return nil
+}
+
+func main() {
+	ppath := flag.String("path", ".", "path to sync")
+	pport := flag.String("port", "8080", "port")
+	flag.Parse()
+
+	GinServe(*ppath, ":"+*pport)
 }
